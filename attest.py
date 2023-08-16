@@ -6,6 +6,7 @@ import streamlit as st
 from scipy.stats import mannwhitneyu
 from scipy.stats import ttest_ind
 import statsmodels.api as sm
+from io import StringIO
 
 def anotherfunction(data_frame):
     selected_parameter1 = st.selectbox("Выберите параметр 1", data_frame.columns, key = "<6>")
@@ -46,25 +47,18 @@ def anotherfunction(data_frame):
             st.write("t-statistic:", tstat)
             st.write("p-value:", pvalue)
         elif sd == "u-test":
-            # Выполняем U-тест Манна-Уитни
             u_statistic, p_value = mannwhitneyu(data_frame[selected_parameter1], data_frame[selected_parameter2], method="auto")
             st.write("U-statistic:", u_statistic)
             st.write("p-value:", p_value)
 
 def run():
     st.title("Аттестация")
-    st.write("Этот набор данных содержит почасовые данные об объеме трафика для I-94 в западном направлении, крупной автомагистрали между штатами в США, которая соединяет Миннеаполис и Сент-Пол, штат Миннесота. Данные были собраны Министерством транспорта Миннесоты (MnDOT) с 2012 по 2018 год на станции примерно на полпути между двумя городами.")
-    html_temp="""
-    
-    """
-    # URL CSV-файла
-    url = "Metro_Interstate_Traffic_Volume.csv"
-
-    # Загрузка CSV-файла
-    dataframe = pd.read_csv(url)
-    st.dataframe(dataframe)
-   
-    anotherfunction(dataframe)
+    uploaded_file = st.file_uploader("Загрузите набор данных")
+    if uploaded_file is not None:
+        dataframe = pd.read_csv(uploaded_file)
+        st.write(dataframe)
+        anotherfunction(dataframe) 
+       
     
 if __name__=='__main__':
     run()
